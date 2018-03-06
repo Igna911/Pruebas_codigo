@@ -465,70 +465,16 @@ def Cdll(Ml):
     
     return CD_base_misil + CDFriccion + CD_onda + CD_onda_aletas + CDFriccion_aletas
 
+'''Aqui empieza el programa'''
+theta = gamalist #ahora esta en radiandes
 
-
-'''Inicialización de variables y diferenciales para la maniobra del misil'''
-
-vl = 288.875 #Inicialización de la velocidad
-yl = 18586  #Inicialización de la altitud 
-thetal = 88.83*pi/180 #Inicialización del ángulo de asiento
-thetalgrados=thetal*(180/pi) #Conversión de radianes a grados del ángulo de asiento
-
-
-
-vxl=vl*cos(thetal) #Inicialización de la componente horizontal de velocidad  
-vyl=vl*sin(thetal) #Inicialización de la componente verical de velocidad 
-tl = 0 #Inicialización temporal 
-xl = 0 #Inicialización de la posición en el eje x 
-sl = 0 #Inicialización del arco recorrido
-dvxl=0 #Inicialización del diferencial de la componente horizontal de velocidad 
-dvyl=0 #Inicialización del diferencial de la componente vertical de velocidad 
-dsl=0 #Inicialización del diferncial del arco recorrido
-dxl=0 #Inicialización del diferencial de la posición
-dyl=0 #Inicialización del diferencial de la altitud
-dtl=0.001 #Inicialización del diferencial de tiempo
-dthetal = 0 #Inicialización del diferencial del ángulo de asiento                                
-
-rho = density(yl)  # Densidad inicial del aire (kg/m3).
-p = pressure(yl)  # Presión inicial del aire (Pa).
-T = temperature(yl)  # Temperatura inicial del aire (K).
-Mu_Visc = viscosity(yl) # Viscosidad 
-#A la altura inicial el avión vuela en vuelo estacionario.   
-dt = 0.1  # Diferencial de tiempo (s).
-
-Ml=vl/((GAMMA*R_AIR*T)**0.5)
-Cdl=Cdll(Ml)
-D_misil=0.5*rho*Cdl*Sref_misil*vl**2
-
-'''Caracterisitcas del cohete'''
-
-gasto = 30
-gasto_etapa2= gasto 
-isp1 = 280
-Empuje_misil = gasto * isp1 * 9.81
-
-ratio_estructural = .05 #'Relacion estrutural, sera un 5% del peso del propulsante de etapa
-masa_maniobras = 0
-masa_util = 30 + masa_maniobras
-
-'''Velocidades implicadas'''
-v_orb = 7800
-v_rotacional = 400
-
-#ESTE SERÁ EL PARAMETOR A ITERAR#
-v_loss = 782
-v_loss_empirica = 0
-error = 800 
-contador = 1
-
-'''Calculos de la optimizacion'''
-while error > .1 and contador <= 50: #calcula la diferencia netre la v_loss claculada y la anterior
+for i in range(149,len(theta),1):
 
     '''Inicialización de variables y diferenciales para la maniobra del misil'''
     
-    vl = 288.875 #Inicialización de la velocidad
-    yl = 18586.2  #Inicialización de la altitud 
-    thetal = 88.83*pi/180 #Inicialización del ángulo de asiento
+    vl = velocidad[i] #Inicialización de la velocidad
+    yl = altura[i]  #Inicialización de la altitud 
+    thetal = theta[i] #Inicialización del ángulo de asiento
     thetalgrados=thetal*(180/pi) #Conversión de radianes a grados del ángulo de asiento
     
     
@@ -543,7 +489,7 @@ while error > .1 and contador <= 50: #calcula la diferencia netre la v_loss clac
     dsl=0 #Inicialización del diferncial del arco recorrido
     dxl=0 #Inicialización del diferencial de la posición
     dyl=0 #Inicialización del diferencial de la altitud
-    dtl=0.01 #Inicialización del diferencial de tiempo
+    dtl=0.001 #Inicialización del diferencial de tiempo
     dthetal = 0 #Inicialización del diferencial del ángulo de asiento                                
     
     rho = density(yl)  # Densidad inicial del aire (kg/m3).
@@ -557,134 +503,89 @@ while error > .1 and contador <= 50: #calcula la diferencia netre la v_loss clac
     Cdl=Cdll(Ml)
     D_misil=0.5*rho*Cdl*Sref_misil*vl**2
     
-    r = RT + yl  # Distancia al centro de la Tierra (m).
-    g0 = MU / r**2  # Aceleración de la gravedad (m/s2).
+    '''Caracterisitcas del cohete'''
     
-    print(contador, v_loss)
-    velocidad_ideal = v_orb - v_rotacional + v_loss - vl
-    print(contador, velocidad_ideal)
-    f = ((1 + ratio_estructural)/exp(velocidad_ideal / (2 * isp1 * g0))) - ratio_estructural
+    gasto = 30
+    gasto_etapa2= gasto 
+    isp1 = 280
+    Empuje_misil = gasto * isp1 * 9.81
     
-    masa_total = masa_util / (f**2)
-    masa_etapa2 = masa_util / f
-    masa_propulsante_etapa1 = (masa_total - masa_etapa2) / (1 + ratio_estructural)
-    masa_propulsante_etapa2 = (masa_etapa2 - masa_util) / (1 + ratio_estructural)
-    masa_estructura1 = masa_propulsante_etapa1 * ratio_estructural
-    masa_estructura2 = masa_propulsante_etapa2 * ratio_estructural
+    ratio_estructural = .05 #'Relacion estrutural, sera un 5% del peso del propulsante de etapa
+    masa_maniobras = 0
+    masa_util = 30 + masa_maniobras
     
-    t_combustion= masa_propulsante_etapa1/gasto
-    t_combustion_2_etapa=masa_propulsante_etapa2/gasto_etapa2 
-    retardo_encendido = 0
-    t_fin_combustion2= t_combustion + t_combustion_2_etapa + retardo_encendido
+    '''Velocidades implicadas'''
+    v_orb = 7800
+    v_rotacional = 400
     
-    masa_misil = masa_total #esta sera la masa que ira variando
+    #ESTE SERÁ EL PARAMETOR A ITERAR#
+    v_loss = 782
     v_loss_empirica = 0
-    while tl<= t_combustion and thetal>0:
-            
-        '''Combustion de la primera etapa
-        '''
-
-        
-        tl=tl+dtl #Evolución temporal (s)
-        xl=xl+dxl #Posición horizontal (m)
-        yl=yl+dyl #Altitud (m) 
-        sl=sl+dsl #Arco recorrido (m)
-        
-        thetal=thetal+dthetal #Ángulo de asiento
-        thetalgrados=thetal*(180/pi) #Conversión de radianes a grados
-        
-        
-        vxl=vxl+dvxl #Componente horizontal de la velocidad (m/s)
-        vyl=vyl+dvyl #Componente vertical de la velocidad (m/s)
-        vl=(vxl**2+vyl**2)**0.5 #Módulo de la velocidad (m/s)
-        
-        r = RT + yl  # Distancia al centro de la Tierra (m).
-        g0 = MU / r**2  # Aceleración de la gravedad (m/s2).
-        
-        rho = density(yl)  # Densidad (kg/m3).
-        T = temperature(yl)  # Temperatura (K).
-        Mu_Visc = viscosity(yl) # Viscosidad 
-        
-        Ml=vl/((GAMMA*R_AIR*T)**0.5) #Mach de vuelo
-        
-        
-        Ratio_areas=(Sref_misil-Sgases)/Sref_misil #Relación de áreas 
-                        
-              
-        Cdl=Cdll(Ml)                     
-        D_misil=0.5*rho*Cdl*Sref_misil*vl**2 #Fuerza de resistencia (N)
-        Dx=D_misil*cos(thetal) #Componente horizontal de la fuerza de resistencia (N)
-        Dy=D_misil*sin(thetal) #Componente vertical de la fuerza de resistencia (N)
-        
-        dvxl_perdidas=-(Dx/masa_misil)*dtl #Diferencial de la componente horizontal de la velocidad (m/s)
-        dvyl_perdidas=-g0*dtl-(Dy/masa_misil)*dtl #Diferencial de la componente vertical de la velocidad (m/s)
-
-        
-        dvxl=dvxl_perdidas+Empuje_misil*cos(thetal)*dtl/masa_misil
-        dvyl=dvyl_perdidas+Empuje_misil*sin(thetal)*dtl/masa_misil
-        masa_misil=masa_misil-gasto*dtl
-            
-        dthetal=dtl*g0*cos(thetal)/(-vl) #Diferencial del ángulo de asiento
-        dxl=vxl*dtl #Diferencial de la posición (m)
-        dyl=vyl*dtl #Diferencial de la altitud (m)
-        dsl=vl*dtl #Diferencial del arco recorrido (m)
-        
-        v_loss_empirica = v_loss_empirica + (dvxl_perdidas**2 + dvyl_perdidas**2)**0.5
-        
-    masa_misil  = masa_misil - masa_estructura1
-    while t_fin_combustion2>=tl>t_combustion and thetal>0 and yl<500000:
+    error = 800 
+    contador = 1
     
-        ''' Combustion de la segunda etapa'''
-
+    '''Calculos de la optimizacion'''
+    while error > 1 and contador <= 50: #calcula la diferencia netre la v_loss claculada y la anterior
+    
+        '''Inicialización de variables y diferenciales para la maniobra del misil'''
         
-        tl=tl+dtl #Evolución temporal (s)
-        xl=xl+dxl #Posición horizontal (m)
-        yl=yl+dyl #Altitud (m) 
-        sl=sl+dsl #Arco recorrido (m)
+        v0 = velocidad[i] #Inicialización de la velocidad
+        y0 = altura[i]  #Inicialización de la altitud 
+        theta0 = theta[i] #Inicialización del ángulo de asiento
+        theta0grados=theta0*(180/pi) #Conversión de radianes a grados del ángulo de asiento
         
-        thetal=thetal+dthetal #Ángulo de asiento
-        thetalgrados=thetal*(180/pi) #Conversión de radianes a grados
+        vl = v0
+        yl = y0
+        thetal = theta0
+        thetalgrados = theta0grados
         
+        vxl=vl*cos(thetal) #Inicialización de la componente horizontal de velocidad  
+        vyl=vl*sin(thetal) #Inicialización de la componente verical de velocidad 
+        tl = 0 #Inicialización temporal 
+        xl = 0 #Inicialización de la posición en el eje x 
+        sl = 0 #Inicialización del arco recorrido
+        dvxl=0 #Inicialización del diferencial de la componente horizontal de velocidad 
+        dvyl=0 #Inicialización del diferencial de la componente vertical de velocidad 
+        dsl=0 #Inicialización del diferncial del arco recorrido
+        dxl=0 #Inicialización del diferencial de la posición
+        dyl=0 #Inicialización del diferencial de la altitud
+        dtl=0.01 #Inicialización del diferencial de tiempo
+        dthetal = 0 #Inicialización del diferencial del ángulo de asiento                                
         
-        vxl=vxl+dvxl #Componente horizontal de la velocidad (m/s)
-        vyl=vyl+dvyl #Componente vertical de la velocidad (m/s)
-        vl=(vxl**2+vyl**2)**0.5 #Módulo de la velocidad (m/s)
+        rho = density(yl)  # Densidad inicial del aire (kg/m3).
+        p = pressure(yl)  # Presión inicial del aire (Pa).
+        T = temperature(yl)  # Temperatura inicial del aire (K).
+        Mu_Visc = viscosity(yl) # Viscosidad 
+        #A la altura inicial el avión vuela en vuelo estacionario.   
+        dt = 0.1  # Diferencial de tiempo (s).
+        
+        Ml=vl/((GAMMA*R_AIR*T)**0.5)
+        Cdl=Cdll(Ml)
+        D_misil=0.5*rho*Cdl*Sref_misil*vl**2
         
         r = RT + yl  # Distancia al centro de la Tierra (m).
         g0 = MU / r**2  # Aceleración de la gravedad (m/s2).
         
-        rho = density(yl)  # Densidad (kg/m3).
-        T = temperature(yl)  # Temperatura (K).
-        Mu_Visc = viscosity(yl) # Viscosidad 
+        velocidad_ideal = v_orb - v_rotacional + v_loss - vl
+        f = ((1 + ratio_estructural)/exp(velocidad_ideal / (2 * isp1 * g0))) - ratio_estructural
         
-        Ml=vl/((GAMMA*R_AIR*T)**0.5) #Mach de vuelo
+        masa_total = masa_util / (f**2)
+        masa_etapa2 = masa_util / f
+        masa_propulsante_etapa1 = (masa_total - masa_etapa2) / (1 + ratio_estructural)
+        masa_propulsante_etapa2 = (masa_etapa2 - masa_util) / (1 + ratio_estructural)
+        masa_estructura1 = masa_propulsante_etapa1 * ratio_estructural
+        masa_estructura2 = masa_propulsante_etapa2 * ratio_estructural
         
+        t_combustion= masa_propulsante_etapa1/gasto
+        t_combustion_2_etapa=masa_propulsante_etapa2/gasto_etapa2 
+        retardo_encendido = 0
+        t_fin_combustion2= t_combustion + t_combustion_2_etapa + retardo_encendido
         
-        Ratio_areas=(Sref_misil-Sgases)/Sref_misil #Relación de áreas 
-                        
-              
-        Cdl=Cdll(Ml)                     
-        D_misil=0.5*rho*Cdl*Sref_misil*vl**2 #Fuerza de resistencia (N)
-        Dx=D_misil*cos(thetal) #Componente horizontal de la fuerza de resistencia (N)
-        Dy=D_misil*sin(thetal) #Componente vertical de la fuerza de resistencia (N)
-        
-        dvxl_perdidas=-(Dx/masa_misil)*dtl #Diferencial de la componente horizontal de la velocidad (m/s)
-        dvyl_perdidas=-g0*dtl-(Dy/masa_misil)*dtl #Diferencial de la componente vertical de la velocidad (m/s)
-            
-        dvxl=dvxl_perdidas+Empuje_misil*cos(thetal)*dtl/masa_misil
-        dvyl=dvyl_perdidas+Empuje_misil*sin(thetal)*dtl/masa_misil
-        masa_misil=masa_misil-gasto_etapa2*dtl
-
-        dthetal=dtl*g0*cos(thetal)/(-vl) #Diferencial del ángulo de asiento
-        dxl=vxl*dtl #Diferencial de la posición (m)
-        dyl=vyl*dtl #Diferencial de la altitud (m)
-        dsl=vl*dtl #Diferencial del arco recorrido (m)
-        
-        v_loss_empirica = v_loss_empirica + (dvxl_perdidas**2 + dvyl_perdidas**2)**0.5
-        
-    masa_misil = masa_misil - masa_estructura2
-    while thetal>0 and yl<500000:
-            '''Fin de etapas
+        masa_misil = masa_total #esta sera la masa que ira variando
+        v_loss_empirica = 0
+        while tl<= t_combustion and thetal>0:
+                
+            '''Combustion de la primera etapa
             '''
     
             
@@ -711,7 +612,7 @@ while error > .1 and contador <= 50: #calcula la diferencia netre la v_loss clac
             Ml=vl/((GAMMA*R_AIR*T)**0.5) #Mach de vuelo
             
             
-            Ratio_areas=1 #Relación de áreas 
+            Ratio_areas=(Sref_misil-Sgases)/Sref_misil #Relación de áreas 
                             
                   
             Cdl=Cdll(Ml)                     
@@ -721,22 +622,125 @@ while error > .1 and contador <= 50: #calcula la diferencia netre la v_loss clac
             
             dvxl_perdidas=-(Dx/masa_misil)*dtl #Diferencial de la componente horizontal de la velocidad (m/s)
             dvyl_perdidas=-g0*dtl-(Dy/masa_misil)*dtl #Diferencial de la componente vertical de la velocidad (m/s)
+    
             
-            dvxl=dvxl_perdidas
-            dvyl=dvyl_perdidas
-            
+            dvxl=dvxl_perdidas+Empuje_misil*cos(thetal)*dtl/masa_misil
+            dvyl=dvyl_perdidas+Empuje_misil*sin(thetal)*dtl/masa_misil
+            masa_misil=masa_misil-gasto*dtl
+                
             dthetal=dtl*g0*cos(thetal)/(-vl) #Diferencial del ángulo de asiento
             dxl=vxl*dtl #Diferencial de la posición (m)
             dyl=vyl*dtl #Diferencial de la altitud (m)
             dsl=vl*dtl #Diferencial del arco recorrido (m)
             
-            v_loss_empirica = v_loss_empirica + (dvxl_perdidas**2 + dvyl_perdidas**2)**0.5 
-    print(v_loss_empirica)
-    error = abs(v_loss_empirica - v_loss)
-    v_loss = v_loss_empirica
+            v_loss_empirica = v_loss_empirica + (dvxl_perdidas**2 + dvyl_perdidas**2)**0.5
+            
+        masa_misil  = masa_misil - masa_estructura1
+        while t_fin_combustion2>=tl>t_combustion and thetal>0 and yl<500000:
+        
+            ''' Combustion de la segunda etapa'''
     
+            
+            tl=tl+dtl #Evolución temporal (s)
+            xl=xl+dxl #Posición horizontal (m)
+            yl=yl+dyl #Altitud (m) 
+            sl=sl+dsl #Arco recorrido (m)
+            
+            thetal=thetal+dthetal #Ángulo de asiento
+            thetalgrados=thetal*(180/pi) #Conversión de radianes a grados
+            
+            
+            vxl=vxl+dvxl #Componente horizontal de la velocidad (m/s)
+            vyl=vyl+dvyl #Componente vertical de la velocidad (m/s)
+            vl=(vxl**2+vyl**2)**0.5 #Módulo de la velocidad (m/s)
+            
+            r = RT + yl  # Distancia al centro de la Tierra (m).
+            g0 = MU / r**2  # Aceleración de la gravedad (m/s2).
+            
+            rho = density(yl)  # Densidad (kg/m3).
+            T = temperature(yl)  # Temperatura (K).
+            Mu_Visc = viscosity(yl) # Viscosidad 
+            
+            Ml=vl/((GAMMA*R_AIR*T)**0.5) #Mach de vuelo
+            
+            
+            Ratio_areas=(Sref_misil-Sgases)/Sref_misil #Relación de áreas 
+                            
+                  
+            Cdl=Cdll(Ml)                     
+            D_misil=0.5*rho*Cdl*Sref_misil*vl**2 #Fuerza de resistencia (N)
+            Dx=D_misil*cos(thetal) #Componente horizontal de la fuerza de resistencia (N)
+            Dy=D_misil*sin(thetal) #Componente vertical de la fuerza de resistencia (N)
+            
+            dvxl_perdidas=-(Dx/masa_misil)*dtl #Diferencial de la componente horizontal de la velocidad (m/s)
+            dvyl_perdidas=-g0*dtl-(Dy/masa_misil)*dtl #Diferencial de la componente vertical de la velocidad (m/s)
+                
+            dvxl=dvxl_perdidas+Empuje_misil*cos(thetal)*dtl/masa_misil
+            dvyl=dvyl_perdidas+Empuje_misil*sin(thetal)*dtl/masa_misil
+            masa_misil=masa_misil-gasto_etapa2*dtl
+    
+            dthetal=dtl*g0*cos(thetal)/(-vl) #Diferencial del ángulo de asiento
+            dxl=vxl*dtl #Diferencial de la posición (m)
+            dyl=vyl*dtl #Diferencial de la altitud (m)
+            dsl=vl*dtl #Diferencial del arco recorrido (m)
+            
+            v_loss_empirica = v_loss_empirica + (dvxl_perdidas**2 + dvyl_perdidas**2)**0.5
+            
+        masa_misil = masa_misil - masa_estructura2
+        while thetal>0 and yl<500000:
+                '''Fin de etapas
+                '''
+        
+                
+                tl=tl+dtl #Evolución temporal (s)
+                xl=xl+dxl #Posición horizontal (m)
+                yl=yl+dyl #Altitud (m) 
+                sl=sl+dsl #Arco recorrido (m)
+                
+                thetal=thetal+dthetal #Ángulo de asiento
+                thetalgrados=thetal*(180/pi) #Conversión de radianes a grados
+                
+                
+                vxl=vxl+dvxl #Componente horizontal de la velocidad (m/s)
+                vyl=vyl+dvyl #Componente vertical de la velocidad (m/s)
+                vl=(vxl**2+vyl**2)**0.5 #Módulo de la velocidad (m/s)
+                
+                r = RT + yl  # Distancia al centro de la Tierra (m).
+                g0 = MU / r**2  # Aceleración de la gravedad (m/s2).
+                
+                rho = density(yl)  # Densidad (kg/m3).
+                T = temperature(yl)  # Temperatura (K).
+                Mu_Visc = viscosity(yl) # Viscosidad 
+                
+                Ml=vl/((GAMMA*R_AIR*T)**0.5) #Mach de vuelo
+                
+                
+                Ratio_areas=1 #Relación de áreas 
+                                
+                      
+                Cdl=Cdll(Ml)                     
+                D_misil=0.5*rho*Cdl*Sref_misil*vl**2 #Fuerza de resistencia (N)
+                Dx=D_misil*cos(thetal) #Componente horizontal de la fuerza de resistencia (N)
+                Dy=D_misil*sin(thetal) #Componente vertical de la fuerza de resistencia (N)
+                
+                dvxl_perdidas=-(Dx/masa_misil)*dtl #Diferencial de la componente horizontal de la velocidad (m/s)
+                dvyl_perdidas=-g0*dtl-(Dy/masa_misil)*dtl #Diferencial de la componente vertical de la velocidad (m/s)
+                
+                dvxl=dvxl_perdidas
+                dvyl=dvyl_perdidas
+                
+                dthetal=dtl*g0*cos(thetal)/(-vl) #Diferencial del ángulo de asiento
+                dxl=vxl*dtl #Diferencial de la posición (m)
+                dyl=vyl*dtl #Diferencial de la altitud (m)
+                dsl=vl*dtl #Diferencial del arco recorrido (m)
+                
+                v_loss_empirica = v_loss_empirica + (dvxl_perdidas**2 + dvyl_perdidas**2)**0.5 
 
-    
-    if contador == 50:
-        print ('error de interacion en el ángulo ', thetalgrados, 'con un error de ', error,' m/s')
-    contador = contador + 1
+        error = abs(v_loss_empirica - v_loss)
+        v_loss = v_loss_empirica
+                   
+        if contador == 50:
+            print ('error de interacion en el ángulo ', theta0grados, 'con un error de ', error,' m/s')
+        contador = contador + 1
+        
+    print('para ', theta0grados,'la masa del misil es ', masa_total, ' la altura es ' , yl)

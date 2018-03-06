@@ -795,7 +795,7 @@ while gama < beta and v > 0:
     thetalgrados=thetal*(180/pi)
     Ddsl=0
     velocidad.append(v)
-    gamalist.append(180/pi*gama)
+    gamalist.append(gama)
     altura.append(h)
     
     
