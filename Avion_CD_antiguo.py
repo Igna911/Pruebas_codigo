@@ -735,7 +735,11 @@ dx = vx * dt  # Variación horizontal de la posición en ejes tierra (m).
 dh = vy * dt  # Variación vertical de la posición en ejes tierra (m).
 dtheta = v * dt / radius  # Variación del ángulo de empuje.
 
+'''Vectores velocidad, gamma, y altura vacios'''
 
+velocidad = []
+gamalist = []
+altura = []
 
 '''-------SISTEMA DE ECUACIONES PARA SEGUNDO TRAMO: MANIOBRA DE GIRO-------
 Ahora comienza el bucle relativo al giro ascendente, que analiza la
@@ -768,6 +772,7 @@ while gama < beta and v > 0:
     
     '''Inicialización de variables y diferenciales para la maniobra del misil'''
     
+
     thetal = gama #Inicialización del ángulo de asiento
     thetalgrados=thetal*(180/pi) #Conversión de radianes a grados del ángulo de asiento
     yl = h #Inicialización de la altitud 
@@ -789,6 +794,9 @@ while gama < beta and v > 0:
                                 
     thetalgrados=thetal*(180/pi)
     Ddsl=0
+    velocidad.append(v)
+    gamalist.append(180/pi*gama)
+    altura.append(h)
     
     
     
