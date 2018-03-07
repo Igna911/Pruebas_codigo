@@ -681,7 +681,7 @@ p = pressure(h)  # Presión inicial del aire (Pa).
 T = temperature(h)  # Temperatura inicial del aire (K).
 Mu_Visc = viscosity(h) # Viscosidad 
 #A la altura inicial el avión vuela en vuelo estacionario.
-M = 1.8  # Número de Mach inicial.
+M = 1.6518  # Número de Mach inicial.
 v = M * (GAMMA * R_AIR * T)**.5  # Velocidad inicial (m/s).
 CL_alfa1 = cl_alfa(M)  # Pendiente del coeficiente de sustentación.
 #Ángulos de asiento, de ataque y de asiento de la velocidad iniciales.
