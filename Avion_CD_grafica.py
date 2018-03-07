@@ -708,7 +708,7 @@ Mu_Visc = viscosity(z0) # Viscosidad inicial
 W = MASS * g0  # Peso inicial del avión dependiente de la gravedad
 
 #A la altura inicial el avión vuela en vuelo estacionario.
-M = 1.8  # Número de Mach inicial.
+M = 1.63865  # Número de Mach inicial.
 v = M * (GAMMA * R_AIR * T)**.5  # Velocidad inicial (m/s).
 CL_alfa1 = cl_alfa(M)  # Pendiente del coeficiente de sustentación.
 
