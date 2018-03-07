@@ -11,13 +11,13 @@ procederá a exportar las características y cómo varían a lo largo de la
 trayectoria para poder obtener sus gráficas.
 '''
 
-'''Condiciones g0itatorias y constantes atmosféricas'''
-G = 6.673e-11  # Constante de g0itación.
+'''Condiciones gravitatorias y constantes atmosféricas'''
+G = 6.673e-11  # Constante de gravitación.
 MT = 5.972e24  # Masa terrestre.
-MU = G * MT
+MU = G * MT    
 RT = 6378136.3  # Radio terrestre.
 R_AIR = 287  # Constante de los gases ideales.
-g0 = 9.80665  # Aceleración gravitatoria inicial
+GRAV = 9.80665  # Aceleración gravitatoria.
 RHO_SL = 101325 / (R_AIR * 288.15)  # Densidad del aire a nivel del mar.
 GAMMA = 1.4  # Coeficiente de dilatación adiabática.
 
@@ -30,7 +30,7 @@ S_visc = 110.4
 Esta subrutina nos permitirá obtener los valores de presión, temperatura y
 densidad del aire en funcióin de la altura. Están sacados de la ISA.  Más
 adelante, en los siguientes bucles, se llamará a las funciones de P, T y rho
-que variarán con respecto a h.
+que variarán con respecto a z0.
 '''
 
 #Estas son las alturas estipuladas según la normativa.
@@ -42,8 +42,6 @@ H_ISA4 = 47000
 H_ISA5 = 51000
 H_ISA6 = 71000
 H_ISA7 = 84852
-
-  
 
 #Ahora se programan las variables termodinámicas, en función de la altura,
 # y se relacionarán con los valores de T y alfa para cada altura estipulada.
@@ -94,49 +92,42 @@ def density(alt):
     t_0 = 288.15
     alfa_isa = -.0065
     if alt < H_ISA1:
-    
-        return rho0 * (t_isa / t_0)**(-g0 / (R_AIR * alfa_isa) - 1)
-    rho0 = rho0 * (temperature(H_ISA1) / t_0)**(-g0 / (R_AIR * alfa_isa) - 1)
+        return rho0 * (t_isa / t_0)**(-GRAV / (R_AIR * alfa_isa) - 1)
+    rho0 = rho0 * (temperature(H_ISA1) / t_0)**(-GRAV / (R_AIR * alfa_isa) - 1)
     h_0 = H_ISA1
     if alt < H_ISA2:
-        
-        return rho0 * exp(-g0 * (alt - h_0) / (R_AIR * t_isa))
-    rho0 = rho0 * exp(-g0 * (H_ISA2 - h_0) / (R_AIR * temperature(H_ISA2)))
+        return rho0 * exp(-GRAV * (alt - h_0) / (R_AIR * t_isa))
+    rho0 = rho0 * exp(-GRAV * (H_ISA2 - h_0) / (R_AIR * temperature(H_ISA2)))
     h_0 = H_ISA2
     t_0 = 216.65
     alfa_isa = .001
     if alt < H_ISA3:
-        
-        return rho0 * (t_isa / t_0)**(-g0 / (R_AIR * alfa_isa) - 1)
-    rho0 = rho0 * (temperature(H_ISA3) / t_0)**(-g0 / (R_AIR * alfa_isa) - 1)
+        return rho0 * (t_isa / t_0)**(-GRAV / (R_AIR * alfa_isa) - 1)
+    rho0 = rho0 * (temperature(H_ISA3) / t_0)**(-GRAV / (R_AIR * alfa_isa) - 1)
     h_0 = H_ISA3
     t_0 = 228.65
     alfa_isa = .0028
     if alt < H_ISA4:
-        
-        return rho0 * (t_isa / t_0)**(-g0 / (R_AIR * alfa_isa) - 1)
-    rho0 = rho0 * (temperature(H_ISA4) / t_0)**(-g0 / (R_AIR * alfa_isa) - 1)
+        return rho0 * (t_isa / t_0)**(-GRAV / (R_AIR * alfa_isa) - 1)
+    rho0 = rho0 * (temperature(H_ISA4) / t_0)**(-GRAV / (R_AIR * alfa_isa) - 1)
     h_0 = H_ISA4
     if alt < H_ISA5:
-        
-        return rho0 * exp(-g0 * (alt - h_0)/(R_AIR * t_isa))
-    rho0 = rho0 * exp(-g0 * (H_ISA5 - h_0)/(R_AIR * temperature(H_ISA5)))
+        return rho0 * exp(-GRAV * (alt - h_0)/(R_AIR * t_isa))
+    rho0 = rho0 * exp(-GRAV * (H_ISA5 - h_0)/(R_AIR * temperature(H_ISA5)))
     h_0 = H_ISA5
     t_0 = 270.65
     alfa_isa = -.0028
     if alt < H_ISA6:
-        
-        return rho0 * (t_isa / t_0)**(-g0 / (R_AIR * alfa_isa) - 1)
-    rho0 = rho0 * (temperature(H_ISA6) / t_0)**(-g0 / (R_AIR * alfa_isa) - 1)
+        return rho0 * (t_isa / t_0)**(-GRAV / (R_AIR * alfa_isa) - 1)
+    rho0 = rho0 * (temperature(H_ISA6) / t_0)**(-GRAV / (R_AIR * alfa_isa) - 1)
     h_0 = H_ISA6
     t_0 = 214.65
     alfa_isa = -.002
     if alt < H_ISA7:
-       
-        return rho0 * (t_isa / t_0)**(-g0 / (R_AIR * alfa_isa) - 1)
-    rho0 = rho0 * (temperature(H_ISA7) / t_0)**(-g0 / (R_AIR * alfa_isa) - 1)
+        return rho0 * (t_isa / t_0)**(-GRAV / (R_AIR * alfa_isa) - 1)
+    rho0 = rho0 * (temperature(H_ISA7) / t_0)**(-GRAV / (R_AIR * alfa_isa) - 1)
     h_0 = H_ISA7
-    return rho0 * exp(-g0 * (alt - h_0) / (R_AIR * t_isa))
+    return rho0 * exp(-GRAV * (alt - h_0) / (R_AIR * t_isa))
 
 def pressure(alt):
     '''Cálculo de la presión en función de la altura dada por el modelo ISA
@@ -205,15 +196,27 @@ def viscosity(alt):
 	    alfa_isa = 0
 	    t = t_0 + alfa_isa * (alt- h_0)                                                    
 		
-    return (beta_visc * t ** (3 / 2)) / (t + S_visc)   
+    return (beta_visc * t ** (3 / 2)) / (t + S_visc)
 
+
+
+def gravity(alt):
+    '''Cálculo de la gravedad en función de la altura en metros
+    '''
+    R = 6378000 + alt
+    
+    return MU/(R**2)
+
+    
+    
+    
 '''
 -------------------CARACTERÍSTICAS GEOMÉTRICAS DEL VEHÍCULO-------------------
 '''
 
 TH_SL = 100000  # Empuje a nivel del mar (máximo).
 N = 3.5  # Factor de carga máximo.
-W = 14273 * g0  # Peso del avión (N).
+W0 = 14273 * GRAV  # Peso del avión (N).
 S_W = 49.2  # Superficie alar (m2).
 B = 11.7  # Envergadura (m).
 AR = B**2 / S_W  # Alargamiento = 2,78.
@@ -221,7 +224,7 @@ FLECHA = radians(52)  # Flecha BA.
 FLECHA2 = radians(41.4)  # Flecha 1/4.
 LF = 19.2  # Longitud del fuselaje.
 BF = 2.87  # Longitud del fuselaje.
-#Se desrecian las pérdidas por consumo de combustible en el peso del avión.
+#Se desprecian las pérdidas por consumo de combustible en el peso del avión.
 
 K = .4  # EL perfil del F-4 es el NACA0006.4-64 por tanto la K es 0,4.
 ESTRECHAMIENTO = .26  # Estrechamiento.
@@ -255,36 +258,39 @@ M_D098 = .98 * M_D
 -------------------CARACTERÍSTICAS GEOMÉTRICAS DEL MISIL-------------------
 '''
 
-diametro_m=0.5           #diametro misil
-longitud_cono = 0.9      #longitud cono misil
-longitud_misil = 3       #longitud total misil
+diametro_m = 0.5         # Diámetro misil
+longitud_cono = 0.9      # longitud cono misil
+longitud_misil = 3       # longitud total misil
 
 
-Sw_aleta = 0.07875                           #Superficie de una aleta del AIM (tomado como ref.)
-Craiz_aleta = 0.24                           #cuerda raiz de aleta
-Cmedia_aleta = 0.18                          #cuerda media de aleta
-espesor_aleta = 0.0065                       #espesor de aleta
-tao_aleta = espesor_aleta/Cmedia_aleta       #tao aleta
-num_aletas = 4                               #numero aletas
+Sw_aleta = 0.07875       # Superficie de una aleta del AIM (tomado como ref.)
+Craiz_aleta = 0.24       # Cuerda raiz de aleta
+Cmedia_aleta = 0.18      # Cuerda media de aleta
+espesor_aleta = 0.0065   # Espesor de aleta
+tao_aleta = espesor_aleta / Cmedia_aleta     # tao aleta
+num_aletas = 4                               # numero aletas
  
-Swtotal_aletas=Sw_aleta*num_aletas           #Superficie total de aletas
-Sref_aletas = Swtotal_aletas/2               #Superficie de referencia aletas
+Swtotal_aletas = Sw_aleta * num_aletas        # Superficie total de aletas
+Sref_aletas = Swtotal_aletas / 2              # Superficie de referencia aletas
 
+# Superficie del cono del misil
+Sup_cono = pi * (diametro_m / 2) * (longitud_cono**2 
+                + (diametro_m / 2)**2)**(1 / 2)
 
-Sup_cono=pi*(diametro_m/2)*(longitud_cono**2+(diametro_m/2)**2)**(1/2)
-Sup_total=2*pi*(diametro_m/2)*(longitud_misil-longitud_cono)
-Sref_misil=pi*(diametro_m/2)**2
-Sgases=pi*((diametro_m)*0.9/2)**2 #Area salida de los gases (consideramos el área de salida de la tobera)
-Ratio_areas=(Sref_misil-Sgases)/Sref_misil #Relación de áreas 
+# Superficie total del misil
+Sup_total = 2 * pi * (diametro_m / 2) * (longitud_misil - longitud_cono)
 
-angulo_cono = atan(0.5*diametro_m/longitud_cono)*(180/pi)  #angulo de la generatriz del cono
+# Superficie de referencia del misil 
+Sref_misil = pi * (diametro_m / 2)**2
 
-#gasto=30                      #Empuje constante del misil
-#masa_misil=1000
-#masa_propulsante=680
-#Isp = 254.84*9.81
-#Empuje_misil= gasto*Isp
-#t_combustion= masa_propulsante/gasto                             #masa del misil, es necesario cambiarlo tambien abajo
+# Area salida de los gases (consideramos el área de salida de la tobera)
+Sgases = pi * ((diametro_m) * 0.9 / 2)**2 
+
+#Relación de áreas de salida de gases para cuando hay propulsion
+Ratio_areas = (Sref_misil - Sgases) / Sref_misil 
+
+# angulo de la generatriz del cono
+angulo_cono = degrees(atan(0.5*diametro_m / longitud_cono))  
 
 '''
 ---------------------------CURVAS DE EMPUJE DEL F-4---------------------------
@@ -421,63 +427,71 @@ def sustentacion(vel, dens, c_l):
     return .5 * dens * S_W * c_l * vel**2
 
 
-def Cdll(Ml):
-
+def Cdll(Ml, rho, Mu_visc, vl):
+    '''Definición de la función de resistencia del misil, la cual depende de
+    las variables de cada punto del misil, por orden, de: Mach (velocidad
+    adimensional), densidad para la altura de vuelo, coeficiente de viscosidad
+    para la altura de vuelo, y velocidad del misil en vuelo
+    ''' 
+    #CÁLCULO COEFICIENTE DE BASE
+    
     def coef_resistencia_base_misil(Ml):
-    
-    	if Ml < 0.8:
-    		x0 = 0
-    		x1 = 0
-    		x2 = 0
-    		x3 = 0
-    		x4 = 0
-    	elif Ml < 1:
-    		x0 = -1.548523
-    		x1 = 6.05972764
-    		x2 = -7.30548391
-    		x3 = 2.96129532
-    		x4 = 0
-    	elif Ml < 1.1:
-    		x0 = 5.79090984*10**3
-    		x1 = -2.19843314*10**4
-    		x2 = 3.12774812*10**4
-    		x3 = -1.97644892*10**4
-    		x4 = 4.68059822*10**3
-    	elif Ml < 1.5:
-    		x0 = -4.11856506
-    		x1 = 1.42267421*10**1
-    		x2 = -1.69678524*10**1
-    		x3 = 8.771665
-    		x4 = -1.67398037
-    	elif Ml < 2.2:
-    		x0 = 3.0748*10**-1
-    		x1 = -1.3258*10**-1
-    		x2 = 2.8812*10**-2
-    		x3 = 0
-    		x4 = 0
-    	elif Ml <=3.5:                            
-    		x0 = 1.8481*10**-1
-    		x1 = -2.2895*10**-2
-    		x2 = 5.1876*10**-3
-    		x3 = -4.0742*10**-4
-    		x4 = 0
-    	elif Ml >3.5:                            
-    		x0 = 0.15
-    		x1 = 0
-    		x2 = 0
-    		x3 = 0
-    		x4 = 0
+        '''Dentro de la definición del Cd del misil, tenemos en primera 
+        instancia, el termino debido a la resistencia de base del misil.
+        '''    
+        if Ml < 0.8:
+            x0 = 0
+            x1 = 0
+            x2 = 0
+            x3 = 0
+            x4 = 0
+        elif Ml < 1:
+            x0 = -1.548523
+            x1 = 6.05972764
+            x2 = -7.30548391
+            x3 = 2.96129532
+            x4 = 0
+        elif Ml < 1.1:
+            x0 = 5.79090984*10**3
+            x1 = -2.19843314*10**4
+            x2 = 3.12774812*10**4
+            x3 = -1.97644892*10**4
+            x4 = 4.68059822*10**3
+        elif Ml < 1.5:
+            x0 = -4.11856506
+            x1 = 1.42267421*10**1
+            x2 = -1.69678524*10**1
+            x3 = 8.771665
+            x4 = -1.67398037
+        elif Ml < 2.2:
+            x0 = 3.0748*10**-1
+            x1 = -1.3258*10**-1
+            x2 = 2.8812*10**-2
+            x3 = 0
+            x4 = 0
+        elif Ml >2.2:                            
+            x0 = 1.8481*10**-1
+            x1 = -2.2895*10**-2
+            x2 = 5.1876*10**-3
+            x3 = -4.0742*10**-4
+            x4 = 0
+#    	elif Ml >3.5:                            
+#    		x0 = 0.15
+#    		x1 = 0
+#    		x2 = 0
+#    		x3 = 0
+#    		x4 = 0
     		    		
-    	return x4*Ml**4 + x3*Ml**3 + x2*Ml**2 + x1*Ml + x0
+        return x4 * Ml**4 + x3 * Ml**3 + x2 * Ml**2 + x1 * Ml + x0
      
-    CD_base_misil = coef_resistencia_base_misil(Ml)*Ratio_areas
+    CD_base_misil = Ratio_areas * coef_resistencia_base_misil(Ml)
     
-  
+    
     #CALCULO DEL COEFICIENTE DE FRICCION
     ##COEFICIENTE DE FRICCIÓN DEL CONO
     ###CALCULO DEL REYNOLDS1 
     
-    Re_cono=rho*vl*longitud_cono/Mu_Visc #REYNOLDS 2
+    Re_cono = rho * vl * longitud_cono / Mu_visc #REYNOLDS 2
     
     def cfcono_misil(Re_cono):
     		
@@ -523,7 +537,7 @@ def Cdll(Ml):
     ##COEFICIENTE DE FRICCIÓN DEL CILINDRO
     
     
-    Re_cil=rho*vl*(longitud_misil-longitud_cono)/Mu_Visc  #REYNOLDS 2
+    Re_cil=rho*vl*(longitud_misil-longitud_cono)/Mu_visc  #REYNOLDS 2
     
     
     def cfcil(Re_cil):
@@ -603,7 +617,7 @@ def Cdll(Ml):
     
     CD_onda_aletas = cd_onda_aletas(Ml,angulo_cono)
         
-    Re_aletas=rho*vl*Craiz_aleta/Mu_Visc #REYNOLDS aletas
+    Re_aletas=rho*vl*Craiz_aleta/Mu_visc #REYNOLDS aletas
     
     #coeficiente fricción aletas
     def cf_aletas(Re_aletas):
@@ -644,7 +658,7 @@ def Cdll(Ml):
     
     		
     		
-    	return cfmaletas*Swtotal_aletas/Sref_misil
+    	return cfmaletas * Swtotal_aletas / Sref_misil
     
     
     CDFriccion_aletas = cf_aletas(Re_aletas)
@@ -656,64 +670,101 @@ def Cdll(Ml):
 # código).  Este ángulo sirve para determinar el ángulo final de la maniobra de
 # giro; es decir, es el ángulo con el que se quiera que comience el ascenso
 # tras el giro vertical.  Dado que se contempla un abanico de posibilidadaes,
-# se decide estudiar in rango desde 10 grados hasta 90 grados.  Este bucle debe
+# se decide estudiar in rango desde 10 grados hasta 90 grados (el cual puede 
+# ser modificado, cambiando el el bucle for de a continuacion.  Este bucle debe
 # durar todo el programa para conseguir que exporte los distintos ficheros
 # correspondientes a cada ángulo.
 
 
 
-beta = 89
+beta=89 
+                       
 beta = radians(beta)
 f = open('resultados', 'w')  # Fichero de escritura sin extensión.
-f.write('TIME (s)\tALTURA lanzamiento (m)\tVELOCIDAD (m/s)')
-f.write('\tTHETA (deg)' '\t gravedad' '\n')
-#Cabezas de tabla.
+
+'''Las variables que se escriben a continuación corresponden al paso de 
+integración del avión en cada paso'''
+f.write('TIME (s)\tALTURA lanzamiento (m) \tDesplazamiento (m)')
+f.write ('\tVELOCIDAD (m/s)\tMACH\tALFA (deg) \tGAMMA (deg) ')
+f.write('\tTHETA (deg) \tfi (deg) \tpsi (deg) \tR \tE_MECANICA (J) \tD')
+
+'''Las variables que es escriben en el archivo que aparecen a continuación 
+se corresponden con el punto final de maniobra del misil para cada 
+lanzamiento en cada paso de integración del misil'''
+f.write('\tTime (s)  \tAltura \tDesplazamiento (m)')
+f.write('\tVelocidad  \tMach \tFi_l \tPsi_l \tR_l \tEmec Misil \n')
+
+# Cabezas de tabla.
 '''-------------------------CONDICIONES INICIALES-------------------------
 Ahora, para los próximos cálculos, se definen las variables termodinámicas
 obtenidas del modelo ISA.
 '''
-h = 12000  # Altitud inicial (m).
-r = RT + h  # Distancia desde el centro de la Tierra (m).
-g0 = MU / r**2  # Aceleración g0itatoria (m/s2).
-W = 14273 * g0
-rho = density(h)  # Densidad inicial del aire (kg/m3).
-p = pressure(h)  # Presión inicial del aire (Pa).
-T = temperature(h)  # Temperatura inicial del aire (K).
-Mu_Visc = viscosity(h) # Viscosidad 
+'''Vectores velocidad, altura, fil y psil vacios, en ellos guardaremos los valores
+de las distintas variables para su posterior uso'''
+
+velocidad = []
+altura = []
+fi_list = []
+psi_list = []
+
+z0 = 12000   # Altitud inicial del misil (m).
+r = RT + z0  # Distancia desde el centro de la Tierra (m).
+g0 = gravity(z0)  # Aceleración gravitatoria inicial (m/s2).
+rho = density(z0)  # Densidad inicial del aire (kg/m3).
+p = pressure(z0)  # Presión inicial del aire (Pa).
+T = temperature(z0)  # Temperatura inicial del aire (K).
+Mu_Visc = viscosity(z0) # Viscosidad inicial 
+W = MASS * g0  # Peso inicial del avión dependiente de la gravedad
+
 #A la altura inicial el avión vuela en vuelo estacionario.
-M = 1.6518  # Número de Mach inicial.
+M = 1.8  # Número de Mach inicial.
 v = M * (GAMMA * R_AIR * T)**.5  # Velocidad inicial (m/s).
 CL_alfa1 = cl_alfa(M)  # Pendiente del coeficiente de sustentación.
-#Ángulos de asiento, de ataque y de asiento de la velocidad iniciales.
+
+# Ángulos de asiento, de ataque y de asiento de la velocidad iniciales.
 alfa_numerico = 2 * W / (rho * v**2 * S_W * CL_alfa1)
 alfa = angulo_ataque(alfa_numerico, M)  # Ángulo de ataque.
 alfa_grados = degrees(alfa)  # Ángulo de ataque en grados.
-gama = 0  # Ángulo de asiento.
+gama = 0  # Ángulo de asiento de la velocidad.
 gama_grados = degrees(gama)  # Ángulo de asiento de la velocidad en grados.
 theta = gama + alfa  # Ángulo de asiento de la velocidad.
 theta_grados = degrees(theta)  # Ángulo de asiento en grados.
-#Coeficientes aerodinámicos
-CL = alfa*CL_alfa1  # Coeficiente de sustentación inicial.
-k1 = k(M)
-CD01 = cd0(M)
-CD_inducida1 = cd_inducida(k1, CL)
+
+# Ángulos de movimiento bidimensional terrestre iniciales
+psi = 0      # Ángulo desplazado de la Tierra
+fi = - psi - gama + pi / 2    # Ángulo de la velocidad sobre vertical local
+psi_grados = degrees(psi) # Ángulo desplazado de la Tierra en grados
+fi_grados = degrees(fi)   # Ángulo velocidad sobre vertical local en grados
+
+
+# Coeficientes aerodinámicos del avión 
+CL = alfa * CL_alfa1  # Coeficiente de sustentación inicial.
+k1 = k(M)  # Parámetro k de la resistencia del avión 
+CD01 = cd0(M)  # Coeficiente de resistencia sin sustentación 
+CD_inducida1 = cd_inducida(k1, CL)  # Coeficiente de resistencia inducida
 CD = CD01 + CD_inducida1  # Polar del avión.  Coeficiente de resistencia.
+
+velocidad.append(v)
+psi_list.append(psi_grados)
+altura.append(z0)
+fi_list.append(fi_grados)
 '''-------------------------INICIO DE LA MANIOBRA-------------------------
 '''
+
 #Se impone un valor constante del radio de giro, es decir, giro ascendente
 # a radio constante.  En futuras versiones de este cálculo, esto se
 # cambiará para buscar una solución más realista.  Por ahora, con objeto de
 # facilitar cálculos, se dejará así.
 radius = v**2 / (g0 * (N - 1))  #Radio de giro inicial (m).
-#Este radio de giro se obtiene para la velocidad inicial en vuelo
+# Este radio de giro se obtiene para la velocidad inicial en vuelo
 # estacionario y para un factor de carga máximo según los pilones de carga
 # n = 3,5.
 dt = 0.1  # Diferencial de tiempo (s).
 '''------SISTEMA DE ECUACIONES PARA PRIMER TRAMO: VUELO ESTACIONARIO------
 '''
 #Energías.
-ecinetica = .5 * (W/g0) * v**2  # Energía cinética (J).
-epotencial = (W/g0) * g0 * h  # Energía potencial (J).
+ecinetica = .5 * MASS * v**2  # Energía cinética (J).
+epotencial = MASS * g0 * z0  # Energía potencial (J).
 emecanica = ecinetica + epotencial  # Energía mecánica (J).
 #Fuerzas.
 D = resistencia(v, rho, CD)  # Resistencia aerodinámica (N).
@@ -723,23 +774,39 @@ diferencia_T_D = Th - D
 #Esto nos va a permitir calcular en qué momento el empuje se verá superado
 # por la resistencia
 n = L / W  # Factor de carga.
+
 #Condiciones iniciales para la integración.
 t = 0
 x = 0
+z = z0
+xt = x
+zt = z0
 omega = v / radius  # Velocidad angular en la maniobra de giro (rad/s).
+
 #Segunda ley de Newton en el eje horizontal (ejes cuerpo).
-dv = dt * (Th * cos(alfa) - D - (W/g0) * g0 * sin(gama)) / (W/g0)
-vx = v * cos(gama)  # Velocidad horizontal del avión en ejes tierra (m/s).
-vy = v * sin(gama)  # Velocidad vertical del avión en ejes tierra (m/s).
-dx = vx * dt  # Variación horizontal de la posición en ejes tierra (m).
-dh = vy * dt  # Variación vertical de la posición en ejes tierra (m).
-dtheta = v * dt / radius  # Variación del ángulo de empuje.
+dv = dt * (Th * cos(alfa) - D - W * cos(fi)) / MASS
 
-'''Vectores velocidad, gamma, y altura vacios'''
+vx = v * sin(fi)  # Velocidad horizontal del avión en ejes HL.
+vy = v * cos(fi)  # Velocidad vertical del avión en ejes VL.
 
-velocidad = []
-gamalist = []
-altura = []
+vxt = v * cos(gama) # Velocidad horizontal del avión en ejes tierra (m/s).
+vyt = v * sin(gama) # Velocidad vertical del avión en ejes tierra (m/s).
+
+dx = vx * dt  # Variación horizontal de la posición en "Horizonte local".
+dz = vy * dt  # Variación vertical de la posición en "Vertical local".
+
+dxt = vxt * dt  # Variación horizontal de la posición en ejes tierra (m/s).
+dzt = vyt * dt  # Variación vertical de la posición en ejes tierra (m/s).
+
+dtheta = v * dt / radius  # Variación del ángulo de asiento.
+dpsi = ((v*sin(fi))/(r))*dt # Variación del ángulo de la vertical local.
+
+# Incialización de las primeras variables del misil   
+vl = v    # Se declara que la velocidad de lanz. del misil es la del avión.
+Ml = vl / ((GAMMA * R_AIR * T)**0.5) # Mach para dicha velocidad del misil.
+Cdl = Cdll(Ml, rho, Mu_Visc, vl)   # Cd del misil para la cond. de vuelo.
+D_misil = 0.5 * rho * Cdl * Sref_misil * vl**2  # Resis. del misil.
+
 
 '''-------SISTEMA DE ECUACIONES PARA SEGUNDO TRAMO: MANIOBRA DE GIRO-------
 Ahora comienza el bucle relativo al giro ascendente, que analiza la
@@ -752,16 +819,21 @@ a beta, se dará por concluida la maniobra de giro y se comenzará con el
 siguiente tramo. Todo ello mientras la velocidad sea positiva, condición
 que permite ver si el resultado es realista o no.
 '''
+
 while gama < beta and v > 0:
     '''A continuación, se escriben en un fichero todas las variables aquí
     detalladas para cada valor de theta < beta.
     '''
     f.write('%.8f\t' %t)  # Tiempo (s).
-    f.write('%.8f\t' %h)  # Altitud (m).
+    f.write('%.8f\t' %z)  # Altitud (m).
+    f.write('%.8f\t' %x)  # Recorrido (m)
     f.write('%.8f\t' %v)  # Velocidad (m/s).
-    f.write('%.8f\t' %CD)  # Velocidad (m/s).
-    f.write('%.8f\n' %gama_grados)  # Asiento de la velocidad (grados).
-    
+    f.write('%.8f\t' %M)  # Número de Mach.
+    f.write('%.8f\t' %alfa_grados)  # Ángulo de ataque (grados).
+    f.write('%.8f\t' %gama_grados)  # Asiento de la velocidad (grados).
+    f.write('%.8f\t' %theta_grados)  # Ángulo de asiento (grados).
+    f.write('%.8f\t' %fi_grados)     # Ángulo del avión sobre la VL.
+    f.write('%.8f\n' %psi_grados)    # Ángulo de la vertical local.
     #Ya que este análisis de maniobra, a diferencia del anterior, lleva un
     # cálculo para distintos valores de tiempo y velocidad, se debe
     # programar su evolución en términos de sus variaciones diferenciales.
@@ -769,51 +841,36 @@ while gama < beta and v > 0:
     # espaciales, temporales y de velocidad.  Los diferenciales se obtienen
     # del tramo anterior, y sirven para que estos nuevos valores actúen en
     # las nuevas condiciones para calcular nuevas variables.
+   
     
-    '''Inicialización de variables y diferenciales para la maniobra del misil'''
+    '''Inicio del cálculo de la maniobra del avión '''
     
-
-    thetal = gama #Inicialización del ángulo de asiento
-    thetalgrados=thetal*(180/pi) #Conversión de radianes a grados del ángulo de asiento
-    yl = h #Inicialización de la altitud 
-    vl = v #Inicialización de la velocidad
-    vxl=vl*cos(thetal) #Inicialización de la componente horizontal de velocidad  
-    vyl=vl*sin(thetal) #Inicialización de la componente verical de velocidad 
-    tl = 0 #Inicialización temporal 
-    xl = 0 #Inicialización de la posición en el eje x 
-    sl = 0 #Inicialización del arco recorrido
-    dvxl=0 #Inicialización del diferencial de la componente horizontal de velocidad 
-    dvyl=0 #Inicialización del diferencial de la componente vertical de velocidad 
-    dsl=0 #Inicialización del diferncial del arco recorrido
-    dxl=0 #Inicialización del diferencial de la posición
-    dyl=0 #Inicialización del diferencial de la altitud
-    dtl=0.01 #Inicialización del diferencial de tiempo
-    dthetal = 0 #Inicialización del diferencial del ángulo de asiento
-    thetal = gama #Ángulo de asiento del avión
-                  #es igual al ángulo de asiento de la velocidad del misil
-                                
-    thetalgrados=thetal*(180/pi)
-    Ddsl=0
-    velocidad.append(v)
-    gamalist.append(gama)
-    altura.append(h)
-    
-    
-    
+    #Incrementos. 
     t = t + dt  # Evolución temporal (s).
     v = v + dv  # Velocidad (m/s).
-    x = x + dx  # Posición horizontal (m).
-    h = h + dh  # Altitud (m)
-    r = RT + h  # Distancia al centro de la Tierra (m).
-    g0 = MU / r**2  # Aceleración de la g0edad (m/s2).
-    W = 14273 * g0
-    #Las variables termodinámicas habrán variado con la altura.
-    rho = density(h)  # Densidad (kg/m3).
-    T = temperature(h)  # Temperatura (K).
-    Mu_Visc = viscosity(h) # Viscosidad 
+    x = x + dx  # Posición horizontal-local (m).
+    xt = xt + dxt  # Posición horizontal en ejes tierra (m)
+    z = z + dz  # Altitud en horizonte-local (m).
+    zt = zt + dzt  # Altitud en ejes del punto de lanzamiento.
+    
+    'Guardamos las variables en la lista'
+    velocidad.append(v)
+    altura.append(z)
+    
+    # Gravitación
+    r = RT + z  # Distancia al centro de la Tierra (m).
+    g = gravity(z)  # Aceleración de la gravedad (m/s2).
+    W = MASS * g    # Peso dependiente de la gravedad
+    
+    # Las variables termodinámicas habrán variado con la altura.
+    rho = density(z)  # Densidad (kg/m3).
+    T = temperature(z)  # Temperatura (K).
+    Mu_Visc = viscosity(z) # Viscosidad
+    
     M = v / (GAMMA * R_AIR * T)**.5 # Mach de vuelo.
     n = 3.5  # Tomamos la condición de factor de carga máximo y constante.
-    radius = v**2 / (g0 * (n - 1))  # Radio de giro varía con la velocidad.
+    radius = v**2 / (g * (n - 1))  # Radio de giro varía con la velocidad.
+    
     #Las características aerodinámicas varían con el número de Mach.
     CL_alfa1 = cl_alfa(M)
     k1 = k(M)
@@ -825,38 +882,61 @@ while gama < beta and v > 0:
     alfa = angulo_ataque(alfa_numerico, M)  # Ángulo de ataque.
     theta = theta + dtheta  # Ángulo de asiento (empuje horizontal).
     gama = theta - alfa  # Ángulo de asiento de la velocidad.
+    psi = psi + dpsi     # Ángulo de vertical local
+    fi = - psi - gama + pi / 2  # Ángulo de la vel sobre la vertical local
+    
     # Ángulos en grados para la exportación a los ficheros.
     alfa_grados = degrees(alfa)  # Ángulo de ataque (grados).
     theta_grados = degrees(theta)  # Ángulo de asiento (grados).
     gama_grados = degrees(gama)  # Asiento de la velocidad (grados).
+    psi_grados = degrees(psi)    # Ángulo de vertical local (grados).
+    fi_grados = degrees(fi)  # Ángulo velocidad sobre la vert loca(grados).
+    
+    'Guardamos las variables en la lista'
+    psi_list.append(psi_grados)
+    fi_list.append(fi_grados)
+    
     CL = alfa * CL_alfa1  # Coeficiente de sustentación.
     n = .5 * rho * v**2 * S_W * CL / W
-    #Nuevas proyecciones de la velocidad (ejes tierra).
-    vx = v * cos(gama)  # Proyección horizontal de la velocidad (m/s).
-    vy = v * sin(gama)  # Proyección vertical de la velocidad (m/s).
-    CD_inducida1 = cd_inducida(k1, CL)
-    CD = CD01 + CD_inducida1  # Polar del avión
+    
+    #Nuevas proyecciones de la velocidad (ejes radiales y ejes posición inicial).
+    
+    vx = v * sin(fi) # Velocidad horizontal en ejes locales                                                            
+    vy = v * cos(fi) # Velocidad vertical en ejes locales
+    vxt = v * cos(gama) # Proyección horizontal velocidad en ejes tierra
+    vyt = v * sin(gama) # Proyección vertical velocidad en ejes tierra
+    CD_inducida1 = cd_inducida(k1, CL) # Coef. resistencia inducida
+    CD = CD01 + CD_inducida1  # Coeficiente de resistencia total
     D = resistencia(v, rho, CD)  # Fuerza de resistencia (N).
     L = n * W  # Fuerza de sustentación (N).
+    
     #Energías.
-    ecinetica = .5 * (W/g0) * v**2  # Energía cinética (J).
-    epotencial = (W/g0) * g0 * h  # Energía potencial (J).
+    ecinetica = .5 * MASS * v**2  # Energía cinética (J).
+    epotencial = MASS * g * z   # Energía potencial (J).
     emecanica = ecinetica + epotencial  # Energía mecánica (J).
+    
     #Empuje.
     Th = thrust(M, rho)  # Empuje (N).
-    diferencia_T_D = Th - D
+    diferencia_T_D = Th - D # Diferencia de empuje frente a resitencia. 
+    
     #Velocidad angular.
     omega = v / radius  # Velocidad angular (rad/s).
+    
     #Nuevas variaciones diferenciales.  Segunda ley de Newton.
-    dv = dt * (Th * cos(alfa) - D - W * sin(gama)) / (W/g0)
+    dv = dt * (Th * cos(alfa) - D - W * cos(fi)) / MASS
+    dpsi = ((v * sin(fi)) / (r)) * dt
     #Esta última ecuación nos permite obtener un nuevo incvremento de
     # velocidad (m/s) que, al reiniciar el bucle será sumado al último
     # valor de la velocidad, obteniendo la variación de la velocidad.
+    
+    # Diferenciales
     dx = vx * dt  # Variación horizontal de la posición (m).
-    dh = v * sin(gama) * dt  # Variación vertical de la posición (m).
-    dtheta = omega * dt  # Variación del ángulo de asiento.
-
-
+    dz = vy * dt  # Variación vertical de la posición (m).
+    
+    dxt = vxt * dt # Variación horizontal posición en ejes tierra (m/s).
+    dzt = vyt * dt # Variación vertical posición en ejes tierra (m/s).
+    
+    dtheta = omega * dt  # Variación del ángulo de asiento       
     
 
 f.close()
